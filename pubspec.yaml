@@ -45,12 +45,19 @@ dependencies:
   # Icons
   cupertino_icons: ^1.0.8
 
+  # JSON Serialization
+  json_annotation: ^4.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
+
+  # Code Generation
+  build_runner: ^2.4.11
+  json_serializable: ^6.8.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

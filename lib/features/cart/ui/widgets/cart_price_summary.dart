@@ -10,8 +10,8 @@ class CartPriceSummary extends StatelessWidget {
 
   const CartPriceSummary({
     super.key,
-    required this.subtotal,
-    required this.shipping,
+    this.subtotal = 0.0,
+    this.shipping = 0.0,
     required this.total,
   });
 
@@ -25,16 +25,21 @@ class CartPriceSummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _SummaryRow(
-            label: 'Subtotal',
-            value: '\$${subtotal.toStringAsFixed(2)}',
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _SummaryRow(
-            label: 'Shipping',
-            value: '\$${shipping.toStringAsFixed(2)}',
-          ),
-          const Divider(color: AppColors.divider, height: AppSpacing.lg),
+          if (subtotal > 0) ...[
+            _SummaryRow(
+              label: 'Subtotal',
+              value: '\$${subtotal.toStringAsFixed(2)}',
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          if (shipping > 0) ...[
+            _SummaryRow(
+              label: 'Shipping',
+              value: '\$${shipping.toStringAsFixed(2)}',
+            ),
+          ],
+          if (subtotal > 0 || shipping > 0)
+            const Divider(color: AppColors.divider, height: AppSpacing.lg),
           _SummaryRow(
             label: 'Total',
             value: '\$${total.toStringAsFixed(2)}',

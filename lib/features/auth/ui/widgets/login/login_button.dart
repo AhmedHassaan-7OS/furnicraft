@@ -1,57 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../../core/util/constants/app_colors.dart';
-import '../../../../../core/util/constants/app_spacing.dart';
 import '../../../../../core/util/constants/app_text_styles.dart';
-import '../../../../../core/router/app_router.dart';
 import '../../../cubit/auth_cubit.dart';
 import '../../../cubit/auth_states.dart';
 
 class LoginButton extends StatelessWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-
-  const LoginButton({
-    super.key,
-    required this.emailController,
-    required this.passwordController,
-  });
+  const LoginButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
-      listenWhen: (_, curr) => curr is AuthSuccess || curr is AuthFailure,
-      listener: (context, state) {
-        if (state is AuthSuccess) context.go(AppRoutes.home);
-        if (state is AuthFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
-        }
-      },
-      buildWhen: (_, curr) => curr is AuthLoading || curr is AuthInitial,
+    return BlocBuilder<AuthCubit, FurniAuthState>(
       builder: (context, state) {
         final isLoading = state is AuthLoading;
         return SizedBox(
           width: double.infinity,
-          height: 52,
+          height: 56,
           child: ElevatedButton(
+            onPressed:
+                isLoading ? null : context.read<AuthCubit>().signIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.black,
+              backgroundColor: AppColors.primary,
+              disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+                borderRadius: BorderRadius.circular(14),
               ),
+              elevation: 0,
             ),
-            onPressed: isLoading
-                ? null
-                : () => context.read<AuthCubit>().login(
-                    email: emailController.text,
-                    password: passwordController.text,
-                  ),
             child: isLoading
-                ? const CircularProgressIndicator(color: AppColors.white)
-                : Text('Login', style: AppTextStyles.button),
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text(
+                    'Sign In',
+                    style: AppTextStyles.bodyLarge.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
           ),
         );
       },

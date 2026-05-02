@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/util/constants/app_colors.dart';
-import '../../../../../core/util/constants/app_spacing.dart';
 import '../../../../../core/util/constants/app_text_styles.dart';
+import '../../../cubit/auth_cubit.dart';
 
 class LoginEmailField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const LoginEmailField({super.key, required this.controller});
+  const LoginEmailField({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
+    return TextFormField(
+      onChanged: context.read<AuthCubit>().onEmailChanged,
       keyboardType: TextInputType.emailAddress,
-      style: AppTextStyles.body,
+      style: AppTextStyles.bodyMedium,
       decoration: InputDecoration(
         labelText: 'Email',
-        hintText: 'Enter your email',
-        labelStyle: AppTextStyles.label,
-        hintStyle: AppTextStyles.caption,
+        labelStyle: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.textSecondary,
+        ),
+        prefixIcon: const Icon(Icons.email_outlined,
+            color: AppColors.textSecondary),
         filled: true,
         fillColor: AppColors.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
     );

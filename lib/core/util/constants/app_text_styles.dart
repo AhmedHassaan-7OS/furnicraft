@@ -90,4 +90,11 @@ abstract class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
+
+  // --- Aliases for consistency with new components ---
+  static TextStyle get headingLarge => h1;
+  static TextStyle get headingMedium => h2;
+  static TextStyle get bodyLarge => h3;
+  static TextStyle get bodyMedium => body;
+  static TextStyle get bodySmall => caption;
 }

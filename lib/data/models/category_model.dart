@@ -4,17 +4,21 @@ part 'category_model.g.dart';
 
 @JsonSerializable()
 class CategoryModel {
-  final String id;
+  final int id;
   final String name;
-  final String imageUrl;
+  @JsonKey(name: 'imageUrl')
+  final String? imageUrl;
 
   const CategoryModel({
     required this.id,
     required this.name,
-    required this.imageUrl,
+    this.imageUrl,
   });
 
-  factory CategoryModel.fromJson(Map<String, dynamic> json) => _$CategoryModelFromJson(json);
+  String? get image => imageUrl;
+
+  factory CategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$CategoryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
 }

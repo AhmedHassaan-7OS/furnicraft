@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/util/constants/app_colors.dart';
 import '../../../../core/util/constants/app_spacing.dart';
 import '../widgets/shop_app_bar.dart';
-import '../widgets/filter_chip_button.dart';
-import '../widgets/load_more_button.dart';
 import '../sections/shop_products_section.dart';
 import '../../cubit/shop_cubit.dart';
 import '../../cubit/shop_states.dart';
@@ -22,7 +20,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ShopCubit>().loadCategory();
+    context.read<ShopCubit>().loadByCategory(widget.categoryName);
   }
 
   @override
@@ -37,50 +35,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
-          final activeFilter = state is ShopFilterChanged
-              ? state.filter
-              : state is ShopLoaded
-              ? state.activeFilter
-              : 'All';
-          return CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: ['Sort by', 'Price', 'Material']
-                          .map(
-                            (f) => Padding(
-                              padding: const EdgeInsets.only(
-                                right: AppSpacing.sm,
-                              ),
-                              child: FilterChipButton(
-                                label: f,
-                                isActive: activeFilter == f,
-                                onTap: () =>
-                                    context.read<ShopCubit>().changeFilter(f),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
+          if (state is ShopError) {
+            return Center(child: Text(state.message));
+          }
+          if (state is ShopLoaded) {
+            return CustomScrollView(
+              slivers: [
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.md),
                 ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                sliver: const ShopProductsSection(),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
-              const SliverToBoxAdapter(child: LoadMoreButton()),
-              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
-            ],
-          );
+                SliverPadding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  sliver: const ShopProductsSection(),
+                ),
+                const SliverToBoxAdapter(
+                    child: SizedBox(height: AppSpacing.xl)),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
     );

@@ -1,25 +1,19 @@
-abstract class AuthState {
-  const AuthState();
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
+
+abstract class FurniAuthState {
+  const FurniAuthState();
 }
 
-class AuthInitial extends AuthState {
-  const AuthInitial();
+class AuthInitial extends FurniAuthState {}
+
+class AuthLoading extends FurniAuthState {}
+
+class AuthAuthenticated extends FurniAuthState {
+  final User user;
+  const AuthAuthenticated(this.user);
 }
 
-class AuthLoading extends AuthState {
-  const AuthLoading();
-}
-
-class AuthPasswordVisible extends AuthState {
-  final bool isVisible;
-  const AuthPasswordVisible({required this.isVisible});
-}
-
-class AuthSuccess extends AuthState {
-  const AuthSuccess();
-}
-
-class AuthFailure extends AuthState {
+class AuthError extends FurniAuthState {
   final String message;
-  const AuthFailure({required this.message});
+  const AuthError(this.message);
 }

@@ -1,25 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../data/repositories/products_repository.dart';
 import 'shop_states.dart';
 
 class ShopCubit extends Cubit<ShopState> {
-  ShopCubit() : super(const ShopInitial());
+  final ProductsRepository _productsRepository;
 
-  String _activeFilter = 'All';
+  ShopCubit({required ProductsRepository productsRepository})
+      : _productsRepository = productsRepository,
+        super(ShopInitial());
 
-  Future<void> loadCategory() async {
-    emit(const ShopLoading());
-    await Future.delayed(const Duration(milliseconds: 400));
-    emit(ShopLoaded(activeFilter: _activeFilter));
-  }
-
-  void changeFilter(String filter) {
-    _activeFilter = filter;
-    emit(ShopFilterChanged(filter: filter));
-  }
-
-  Future<void> loadMore() async {
-    emit(const ShopLoadingMore());
-    await Future.delayed(const Duration(seconds: 1));
-    emit(ShopLoaded(activeFilter: _activeFilter));
+  Future<void> loadByCategory(String categoryName) async {
+    emit(ShopLoading());
+    try {
+      final products =
+          await _productsRepository.fetchByCategory(categoryName);
+      emit(ShopLoaded(products: products));
+    } catch (e) {
+      emit(ShopError(e.toString()));
+    }
   }
 }

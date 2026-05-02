@@ -1,30 +1,20 @@
+import '../../../../data/models/product_model.dart';
+
 abstract class ShopState {
   const ShopState();
 }
 
-class ShopInitial extends ShopState {
-  const ShopInitial();
-}
+class ShopInitial extends ShopState {}
 
-class ShopLoading extends ShopState {
-  const ShopLoading();
-}
+class ShopLoading extends ShopState {}
 
 class ShopLoaded extends ShopState {
-  final String activeFilter;
-  const ShopLoaded({this.activeFilter = 'All'});
+  final List<ProductModel> products;
+
+  const ShopLoaded({required this.products});
 }
 
-class ShopFilterChanged extends ShopState {
-  final String filter;
-  const ShopFilterChanged({required this.filter});
-}
-
-class ShopLoadingMore extends ShopState {
-  const ShopLoadingMore();
-}
-
-class ShopFailure extends ShopState {
+class ShopError extends ShopState {
   final String message;
-  const ShopFailure({required this.message});
+  const ShopError(this.message);
 }

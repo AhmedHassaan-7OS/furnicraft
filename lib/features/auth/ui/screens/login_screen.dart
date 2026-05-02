@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furnicraft/features/cart/cubit/cart_cubit.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/util/constants/app_colors.dart';
 import '../../../../core/util/constants/app_spacing.dart';
 import '../widgets/login/login_logo.dart';
@@ -9,87 +13,83 @@ import '../widgets/login/login_button.dart';
 import '../widgets/login/login_divider.dart';
 import '../widgets/login/login_social_button.dart';
 import '../widgets/login/login_signup_link.dart';
+import '../../cubit/auth_cubit.dart';
+import '../../cubit/auth_states.dart';
+import '../../../wishlist/cubit/wishlist_cubit.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: AppSpacing.xl),
-              const LoginLogo(),
-              const SizedBox(height: AppSpacing.xl),
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+    return BlocListener<AuthCubit, FurniAuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          context.read<WishlistCubit>().loadFromSupabase();
+          context.read<CartCubit>().loadFromSupabase();
+          context.go(AppRoutes.home);
+        }
+        if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Back button ──────────────────────────────────────
+                GestureDetector(
+                  onTap: () => context.go(AppRoutes.welcome),
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.xs),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ],
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 20,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LoginEmailField(controller: _emailController),
-                    const SizedBox(height: AppSpacing.md),
-                    LoginPasswordField(controller: _passwordController),
-                    const SizedBox(height: AppSpacing.sm),
-                    const LoginForgotPassword(),
-                    const SizedBox(height: AppSpacing.md),
-                    LoginButton(
-                      emailController: _emailController,
-                      passwordController: _passwordController,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    const LoginDivider(),
-                    const SizedBox(height: AppSpacing.md),
-                    LoginSocialButton(
-                      label: 'Login with Google',
-                      icon: Icons.g_mobiledata,
-                      iconColor: Colors.red,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    LoginSocialButton(
-                      label: 'Login with Apple',
-                      icon: Icons.apple,
-                      iconColor: AppColors.black,
-                      onTap: () {},
-                    ),
-                  ],
+                const SizedBox(height: AppSpacing.xl),
+
+                // ── Existing login widgets (keep ALL of them) ─────────
+                const LoginLogo(),
+                const SizedBox(height: AppSpacing.xl),
+                const LoginEmailField(),
+                const SizedBox(height: AppSpacing.md),
+                const LoginPasswordField(),
+                const SizedBox(height: AppSpacing.sm),
+                const LoginForgotPassword(),
+                const SizedBox(height: AppSpacing.lg),
+                const LoginButton(),
+                const SizedBox(height: AppSpacing.md),
+                const LoginDivider(),
+                const SizedBox(height: AppSpacing.md),
+                LoginSocialButton(
+                  label: 'Continue with Google',
+                  icon: Icons.g_mobiledata,
+                  iconColor: Colors.blue,
+                  onTap: () {},
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              const LoginSignUpLink(),
-              const SizedBox(height: AppSpacing.lg),
-            ],
+                const SizedBox(height: AppSpacing.lg),
+                const LoginSignupLink(),
+              ],
+            ),
           ),
         ),
       ),

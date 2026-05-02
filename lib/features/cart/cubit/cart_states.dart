@@ -1,53 +1,43 @@
+import '../../../../data/models/product_model.dart';
+
 class CartItem {
-  final String id;
-  final String name;
-  final String imageUrl;
-  final String color;
-  final double price;
-  int quantity;
+  final ProductModel product;
+  final int quantity;
 
-  CartItem({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-    required this.color,
-    required this.price,
-    this.quantity = 1,
-  });
+  const CartItem({required this.product, required this.quantity});
 
-  CartItem copyWith({int? quantity}) {
-    return CartItem(
-      id: id,
-      name: name,
-      imageUrl: imageUrl,
-      color: color,
-      price: price,
-      quantity: quantity ?? this.quantity,
-    );
-  }
+  CartItem copyWith({ProductModel? product, int? quantity}) => CartItem(
+        product: product ?? this.product,
+        quantity: quantity ?? this.quantity,
+      );
+
+  double get subtotal => product.price * quantity;
 }
 
 abstract class CartState {
   const CartState();
 }
 
-class CartInitial extends CartState {
-  const CartInitial();
-}
+class CartInitial extends CartState {}
 
 class CartLoaded extends CartState {
   final List<CartItem> items;
 
   const CartLoaded({required this.items});
 
-  double get subtotal =>
-      items.fold(0, (sum, item) => sum + item.price * item.quantity);
+  CartLoaded copyWith({List<CartItem>? items}) =>
+      CartLoaded(items: items ?? this.items);
 
-  double get shipping => items.isEmpty ? 0 : 50;
+  double get total => items.fold(0, (sum, item) => sum + item.subtotal);
 
-  double get total => subtotal + shipping;
+  int get totalItems => items.fold(0, (sum, item) => sum + item.quantity);
+
+  bool get isEmpty => items.isEmpty;
 }
 
-class CartEmpty extends CartState {
-  const CartEmpty();
+class CartCheckoutSuccess extends CartState {
+  final String orderReference;
+  const CartCheckoutSuccess(this.orderReference);
 }
+
+class CartCheckoutLoading extends CartState {}

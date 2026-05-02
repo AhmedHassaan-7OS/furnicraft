@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/util/app_cached_image.dart';
 import '../../../../core/util/constants/app_colors.dart';
 import '../../../../core/util/constants/app_spacing.dart';
 import '../../../../core/util/constants/app_text_styles.dart';
@@ -32,11 +33,9 @@ class BannerCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            imageUrl,
+          AppCachedImage(
+            url: imageUrl,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) =>
-                const ColoredBox(color: AppColors.cardBackground),
           ),
           Container(
             decoration: BoxDecoration(

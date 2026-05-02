@@ -5,9 +5,11 @@ import '../../cubit/product_cubit.dart';
 import '../sections/product_images_section.dart';
 import '../sections/product_info_section.dart';
 import '../sections/product_actions_section.dart';
+import '../../../../data/models/product_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key});
+  final ProductModel product;
+  const ProductDetailsScreen({super.key, required this.product});
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -17,7 +19,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductCubit>().loadProduct();
+    context.read<ProductCubit>().loadProduct(widget.product);
   }
 
   @override
@@ -26,7 +28,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       backgroundColor: AppColors.background,
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
-        slivers: const [
+        slivers: [
           ProductImagesSection(),
           ProductInfoSection(),
           ProductActionsSection(),

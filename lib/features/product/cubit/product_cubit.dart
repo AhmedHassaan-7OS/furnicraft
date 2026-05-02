@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../data/models/product_model.dart';
 import 'product_states.dart';
 
 class ProductCubit extends Cubit<ProductState> {
@@ -7,7 +8,7 @@ class ProductCubit extends Cubit<ProductState> {
   ProductLoaded get _current =>
       state is ProductLoaded ? state as ProductLoaded : const ProductLoaded();
 
-  void loadProduct() => emit(const ProductLoaded());
+  void loadProduct(ProductModel product) => emit(ProductLoaded(product: product));
 
   void selectColor(int index) =>
       emit(_current.copyWith(selectedColorIndex: index));
